@@ -1,0 +1,25 @@
+ColorToGrey Change Log 
+All changes by Paul Macklin unless otherwise noted.
+
+Date: 2-14-2005
+Changes from 0.50 to 0.51:
+    Added BMP32 support.
+
+    Decided to output everything to 8-bits if it's 32-bit or 24-bit
+
+    
+Date: 5-16-2005
+Changes from 0.51 to 0.59: 
+    Rewrote to use new version of the library. 
+    
+    Removed change log from source file. 
+
+Date: 5-26-2006
+Changes from 0.59 to 1.01:
+    Used simpler, faster, more human vision-oriented grayscale 
+    algorithm. (30% red + 59% green + 11% blue).
+
+    Updated to make the source compatible with modern EasyBMP 
+    versions. (Tested with 1.02.)
+
+   
