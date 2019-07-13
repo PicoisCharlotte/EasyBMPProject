@@ -17,10 +17,13 @@ int main( int argc, char* argv[] )
     strcpy( OutputName , argv[k] );
     int i,j;
     int Length = strlen(OutputName);
-    OutputName[Length-4] = 'G';
-    OutputName[Length-3] = 'r';
-    OutputName[Length-2] = 'e';
-    OutputName[Length-1] = 'y';
+    OutputName[Length-7] = 'N';
+    OutputName[Length-6] = 'e';
+    OutputName[Length-5] = 'g';
+    OutputName[Length-4] = 'a';
+    OutputName[Length-3] = 't';
+    OutputName[Length-2] = 'i';
+    OutputName[Length-1] = 'f';
     OutputName[Length] = '\0';
     strcat( OutputName , ".bmp");
 
