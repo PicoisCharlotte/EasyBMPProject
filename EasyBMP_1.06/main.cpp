@@ -32,12 +32,12 @@ void blackAndWhite(){
     {
         for( int j=0 ; j < BlackAndWhite.TellHeight() ; j++)
         {
-            double Temp = 0.30*( BlackAndWhite(i,j)->Red   ) +
-                          0.59*( BlackAndWhite(i,j)->Green ) +
-                          0.11*( BlackAndWhite(i,j)->Blue  );
-            BlackAndWhite(i,j)->Red   = (ebmpBYTE) Temp;
-            BlackAndWhite(i,j)->Green = (ebmpBYTE) Temp;
-            BlackAndWhite(i,j)->Blue  = (ebmpBYTE) Temp;
+            double res = redGreyscale * (BlackAndWhite(i,j)->Red) +
+                        greenGreyscale * (BlackAndWhite(i,j)->Green) +
+                        blueGreyscale * (BlackAndWhite(i,j)->Blue);
+            BlackAndWhite(i,j)->Red   = (ebmpBYTE) res;
+            BlackAndWhite(i,j)->Green = (ebmpBYTE) res;
+            BlackAndWhite(i,j)->Blue  = (ebmpBYTE) res;
         }
     }
 
