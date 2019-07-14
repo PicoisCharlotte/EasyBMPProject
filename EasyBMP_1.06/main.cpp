@@ -5,24 +5,30 @@
 #include <stdlib.h>
 #include <iostream>
 
-
 #include <omp.h>
 
 #include "EasyBMP.h"
-
-double redGreyscale = 0.30;
-double greenGreyscale = 0.59;
-double blueGreyscale = 0.11;
-
-using namespace std;
+#include "ResizeBMP_1.01/ResizeBMP.cpp"
 
 BMP BlackAndWhite;
 
 BMP Negatif;
 
+BMP ResizeIn;
+BMP ResizeOut;
+
+double redGreyscale = 0.30;
+double greenGreyscale = 0.59;
+double blueGreyscale = 0.11;
+
+int NewWidth = 0;
+int NewHeight = 0;
+
+using namespace std;
 
 void blackAndWhite();
 void negatif();
+void resize(char* argv[], int Percentage);
 
 void blackAndWhite(){
     int i,j;
@@ -33,8 +39,8 @@ void blackAndWhite(){
         for( int j=0 ; j < BlackAndWhite.TellHeight() ; j++)
         {
             double res = redGreyscale * (BlackAndWhite(i,j)->Red) +
-                        greenGreyscale * (BlackAndWhite(i,j)->Green) +
-                        blueGreyscale * (BlackAndWhite(i,j)->Blue);
+                         greenGreyscale * (BlackAndWhite(i,j)->Green) +
+                         blueGreyscale * (BlackAndWhite(i,j)->Blue);
             BlackAndWhite(i,j)->Red   = (ebmpBYTE) res;
             BlackAndWhite(i,j)->Green = (ebmpBYTE) res;
             BlackAndWhite(i,j)->Blue  = (ebmpBYTE) res;
@@ -69,10 +75,38 @@ void negatif() {
 }
 
 
+void resize(char* argv[], int Percentage) {
+
+
+    ResizeIn.ReadFromFile( "EasyBMPbackground.bmp" );
+
+    NewWidth = (int) ( ResizeIn.TellWidth() * Percentage / 100.0 );
+    NewHeight = (int) ( ResizeIn.TellHeight() * Percentage / 100.0 );
+
+    ResizeOut.SetSize( NewWidth, NewHeight );
+
+    if( ResizeIn.TellBitDepth() == 32 ) {
+        ResizeOut.SetBitDepth( 32 );
+    } else {
+        ResizeOut.SetBitDepth( 24 );
+    }
+
+    for(int j = 0; j <ResizeOut.TellHeight(); ++j) {
+        for(int i = 0; i < ResizeOut.TellWidth(); ++i) {
+            RGBApixel rgbApixel = GetPixel( ResizeIn, i, ResizeOut.TellWidth(), j, ResizeOut.TellHeight());
+            *ResizeOut(i,j) = rgbApixel;
+        }
+    }
+
+    ResizeOut.WriteToFile( "ResizeEasyBMPbackground.bmp" );
+}
+
 int main(int argc, char* argv[]) {
+    int Percentage;
+
     int choice;
 
-    cout << "\n1. Black And White BMP\n2. Negatif BMP" << endl;
+    cout << "\n1. Black And White BMP\n2. Negatif BMP\n3. Resize BMP" << endl;
     cin >> choice;
 
     switch(choice) {
@@ -82,8 +116,13 @@ int main(int argc, char* argv[]) {
         case 2:
             negatif();
             break;
+        case 3:
+            cout << "Enter percentage" << endl;
+            cin >> Percentage;
+
+            resize(argv, Percentage);
+            break;
         default:
             cout << "Choice error !\n" << endl;
     }
-
 }
