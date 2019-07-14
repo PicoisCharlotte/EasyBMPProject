@@ -11,15 +11,17 @@
 #include "ResizeBMP_1.01/ResizeBMP.cpp"
 
 BMP BlackAndWhite;
+double redGreyscale = 0.30;
+double greenGreyscale = 0.59;
+double blueGreyscale = 0.11;
+int i,j;
+double blackAndWhiteStart;
+double blackAndWhiteEnd;
 
 BMP Negatif;
 
 BMP ResizeIn;
 BMP ResizeOut;
-
-double redGreyscale = 0.30;
-double greenGreyscale = 0.59;
-double blueGreyscale = 0.11;
 
 int NewWidth = 0;
 int NewHeight = 0;
@@ -31,13 +33,13 @@ void negatif();
 void resize(char* argv[], int Percentage);
 
 void blackAndWhite(){
-    int i,j;
     BlackAndWhite.ReadFromFile( "EasyBMPbackground.bmp" );
 
-    for( int i=0 ; i < BlackAndWhite.TellWidth() ; i++)
-    {
-        for( int j=0 ; j < BlackAndWhite.TellHeight() ; j++)
-        {
+    blackAndWhiteStart = omp_get_wtime();
+
+#pragma omp parallel for private(i, j)
+    for(i = 0 ; i < BlackAndWhite.TellWidth() ; i++) {
+        for(j = 0 ; j < BlackAndWhite.TellHeight() ; j++) {
             double res = redGreyscale * (BlackAndWhite(i,j)->Red) +
                          greenGreyscale * (BlackAndWhite(i,j)->Green) +
                          blueGreyscale * (BlackAndWhite(i,j)->Blue);
@@ -47,12 +49,15 @@ void blackAndWhite(){
         }
     }
 
-    BlackAndWhite.SetBitDepth( 8 );
+    BlackAndWhite.SetBitDepth(8);
 
-    CreateGrayscaleColorTable( BlackAndWhite );
+    CreateGrayscaleColorTable(BlackAndWhite);
 
-    BlackAndWhite.WriteToFile( "BlackAndWhiteEasyBMPbackground.bmp" );
+    blackAndWhiteEnd = omp_get_wtime();
 
+    cout << "Black and White program has been processed in " << (blackAndWhiteEnd - blackAndWhiteStart) * 1000 << " milliseconds\n" << endl;
+
+    BlackAndWhite.WriteToFile("BlackAndWhiteEasyBMPbackground.bmp");
 }
 
 void negatif() {
