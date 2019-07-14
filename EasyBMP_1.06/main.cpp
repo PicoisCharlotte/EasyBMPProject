@@ -17,6 +17,10 @@ double blueGreyscale = 0.11;
 int i,j;
 double blackAndWhiteStart;
 double blackAndWhiteEnd;
+double negativeStart;
+double negativeEnd;
+double resizeStart;
+double resizeEnd;
 
 BMP Negatif;
 
@@ -64,6 +68,9 @@ void negatif() {
     int i,j;
     Negatif.ReadFromFile( "EasyBMPbackground.bmp");
 
+    negativeStart = omp_get_wtime();
+
+#pragma omp parallel for private(i, j)
     for( int i=0 ; i < Negatif.TellWidth() ; i++)
     {
         for( int j=0 ; j < Negatif.TellHeight() ; j++)
@@ -76,6 +83,10 @@ void negatif() {
 
     Negatif.SetBitDepth( 8 );
 
+    negativeEnd = omp_get_wtime();
+
+    cout << "Negative program has been processed in " << (negativeEnd - negativeStart) * 1000 << " milliseconds\n" << endl;
+
     Negatif.WriteToFile( "NegatifEasyBMPbackground.bmp" );
 }
 
@@ -84,6 +95,9 @@ void resize(char* argv[], int Percentage) {
 
 
     ResizeIn.ReadFromFile( "EasyBMPbackground.bmp" );
+
+    resizeStart = omp_get_wtime();
+
 
     NewWidth = (int) ( ResizeIn.TellWidth() * Percentage / 100.0 );
     NewHeight = (int) ( ResizeIn.TellHeight() * Percentage / 100.0 );
@@ -96,12 +110,17 @@ void resize(char* argv[], int Percentage) {
         ResizeOut.SetBitDepth( 24 );
     }
 
+#pragma omp parallel for private(i, j)
     for(int j = 0; j <ResizeOut.TellHeight(); ++j) {
         for(int i = 0; i < ResizeOut.TellWidth(); ++i) {
             RGBApixel rgbApixel = GetPixel( ResizeIn, i, ResizeOut.TellWidth(), j, ResizeOut.TellHeight());
             *ResizeOut(i,j) = rgbApixel;
         }
     }
+
+    resizeEnd = omp_get_wtime();
+
+    cout << "Resize program has been processed in " << (resizeEnd - resizeStart) * 1000 << " milliseconds\n" << endl;
 
     ResizeOut.WriteToFile( "ResizeEasyBMPbackground.bmp" );
 }
