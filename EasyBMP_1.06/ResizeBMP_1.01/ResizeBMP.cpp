@@ -1,24 +1,3 @@
-/**************************************************************
-*                                                             *
-*  EasyBMP Cross-Platform Windows Bitmap Library Code Sample  * 
-*                                                             *
-*  Author: Paul Macklin                                       *
-*   email: macklin01@users.sourceforge.net                    *
-*     WWW: http://easybmp.sourceforge.net                     *
-*                                                             *
-*    file: ResizeBMP.cpp                                      *
-*    date: 2-6-2006                                           *
-* version: 1.00                                               *
-*                                                             *
-*   License: GPL v 2                                          *
-* Copyright: 2005-2006 by the EasyBMP Project                 *
-*                                                             *
-* description: Code sample for EasyBMP library that resizes   *
-*              any BMP to be either a specified width         *
-*              height, or percentage of original size         *
-*                                                             *
-**************************************************************/
-
 #include "../EasyBMP.h"
 
 using namespace std;

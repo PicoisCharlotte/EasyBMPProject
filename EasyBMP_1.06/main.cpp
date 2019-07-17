@@ -19,9 +19,13 @@ double blackAndWhiteStart;
 double blackAndWhiteEnd;
 
 BMP Negatif;
+double negativeStart;
+double negativeEnd;
 
 BMP ResizeIn;
 BMP ResizeOut;
+double resizeStart;
+double resizeEnd;
 
 int NewWidth = 0;
 int NewHeight = 0;
@@ -33,6 +37,7 @@ void negatif();
 void resize(char* argv[], int Percentage);
 
 void blackAndWhite(){
+
     BlackAndWhite.ReadFromFile( "EasyBMPbackground.bmp" );
 
     blackAndWhiteStart = omp_get_wtime();
@@ -47,6 +52,7 @@ void blackAndWhite(){
             BlackAndWhite(i,j)->Green = (ebmpBYTE) res;
             BlackAndWhite(i,j)->Blue  = (ebmpBYTE) res;
         }
+        cout << "Processing file EasyBMPbackground.bmp in progress " << endl;
     }
 
     BlackAndWhite.SetBitDepth(8);
@@ -64,17 +70,24 @@ void negatif() {
     int i,j;
     Negatif.ReadFromFile( "EasyBMPbackground.bmp");
 
-    for( int i=0 ; i < Negatif.TellWidth() ; i++)
-    {
+    negativeStart = omp_get_wtime();
+
+#pragma omp parallel for private(i, j)
+    for( int i=0 ; i < Negatif.TellWidth() ; i++) {
         for( int j=0 ; j < Negatif.TellHeight() ; j++)
         {
             Negatif(i,j)->Red   = (ebmpBYTE) 255 - ( Negatif(i,j)->Red   );
             Negatif(i,j)->Green = (ebmpBYTE) 255 - ( Negatif(i,j)->Green );
             Negatif(i,j)->Blue  = (ebmpBYTE) 255 - ( Negatif(i,j)->Blue  );
         }
+        cout << "Processing file EasyBMPbackground.bmp in progress " << endl;
     }
 
     Negatif.SetBitDepth( 8 );
+
+    negativeEnd = omp_get_wtime();
+
+    cout << "Negative program has been processed in " << (negativeEnd - negativeStart) * 1000 << " milliseconds\n" << endl;
 
     Negatif.WriteToFile( "NegatifEasyBMPbackground.bmp" );
 }
@@ -82,8 +95,9 @@ void negatif() {
 
 void resize(char* argv[], int Percentage) {
 
-
     ResizeIn.ReadFromFile( "EasyBMPbackground.bmp" );
+
+    resizeStart = omp_get_wtime();
 
     NewWidth = (int) ( ResizeIn.TellWidth() * Percentage / 100.0 );
     NewHeight = (int) ( ResizeIn.TellHeight() * Percentage / 100.0 );
@@ -101,7 +115,12 @@ void resize(char* argv[], int Percentage) {
             RGBApixel rgbApixel = GetPixel( ResizeIn, i, ResizeOut.TellWidth(), j, ResizeOut.TellHeight());
             *ResizeOut(i,j) = rgbApixel;
         }
+        cout << "Processing file EasyBMPbackground.bmp in progress " << endl;
     }
+
+    resizeEnd = omp_get_wtime();
+
+    cout << "Resize program has been processed in " << (resizeEnd - resizeStart) * 1000 << " milliseconds\n" << endl;
 
     ResizeOut.WriteToFile( "ResizeEasyBMPbackground.bmp" );
 }
