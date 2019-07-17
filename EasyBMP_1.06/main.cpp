@@ -8,7 +8,7 @@
 #include <omp.h>
 
 #include "EasyBMP.h"
-#include "ResizeBMP_1.01/ResizeBMP.cpp"
+#include "Resize.cpp"
 
 BMP BlackAndWhite;
 double redGreyscale = 0.30;
@@ -90,17 +90,12 @@ void negatif() {
     Negatif.WriteToFile( "NegatifEasyBMPbackground.bmp" );
 }
 
-
 void resize(char* argv[], int Percentage) {
 
 
     ResizeIn.ReadFromFile( "EasyBMPbackground.bmp" );
 
     resizeStart = omp_get_wtime();
-
-
-    NewWidth = (int) ( ResizeIn.TellWidth() * Percentage / 100.0 );
-    NewHeight = (int) ( ResizeIn.TellHeight() * Percentage / 100.0 );
 
     ResizeOut.SetSize( NewWidth, NewHeight );
 
@@ -110,19 +105,13 @@ void resize(char* argv[], int Percentage) {
         ResizeOut.SetBitDepth( 24 );
     }
 
-#pragma omp parallel for private(i, j)
-    for(int j = 0; j <ResizeOut.TellHeight(); ++j) {
-        for(int i = 0; i < ResizeOut.TellWidth(); ++i) {
-            RGBApixel rgbApixel = GetPixel( ResizeIn, i, ResizeOut.TellWidth(), j, ResizeOut.TellHeight());
-            *ResizeOut(i,j) = rgbApixel;
-        }
-    }
+    Resize(ResizeIn, 'P', Percentage);
 
     resizeEnd = omp_get_wtime();
 
     cout << "Resize program has been processed in " << (resizeEnd - resizeStart) * 1000 << " milliseconds\n" << endl;
 
-    ResizeOut.WriteToFile( "ResizeEasyBMPbackground.bmp" );
+    ResizeIn.WriteToFile( "ResizeEasyBMPbackground.bmp" );
 }
 
 int main(int argc, char* argv[]) {
